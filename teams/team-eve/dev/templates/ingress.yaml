@@ -1,0 +1,43 @@
+{{- range $app := .Values.apps }}
+{{- if ($app.ingress.enabled | default true) }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $app.name }}
+  labels:
+    app.kubernetes.io/name: {{ $app.name }}
+    {{- toYaml $.Values.labels | nindent 4 }}
+  annotations:
+    {{- if eq $.Values.spec.ingress.type "alb" }}
+    alb.ingress.kubernetes.io/scheme: {{ $.Values.spec.ingress.scheme | default "internet-facing" }}
+    alb.ingress.kubernetes.io/target-type: {{ $.Values.spec.ingress.targetType | default "ip" | quote }}
+    {{- if $.Values.spec.ingress.groupName }}
+    alb.ingress.kubernetes.io/group.name: {{ $.Values.spec.ingress.groupName | quote }}
+    {{- end }}
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/listen-ports: {{ $.Values.spec.ingress.listenPorts | quote }}
+    {{- end }}
+
+spec:
+  {{- if eq $.Values.spec.ingress.type "nginx" }}
+  ingressClassName: nginx
+  {{- else }}
+  ingressClassName: alb
+  {{- end }}
+
+  rules:
+    -{{- if $.Values.spec.ingress.host }}
+      host: {{ $.Values.spec.ingress.host }}
+      {{- end }}
+      http:
+        paths:
+          - path: {{ $app.ingress.path | default "/" }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $app.name }}
+                port:
+                  number: {{ $app.servicePort | default 80 }}
+---
+{{- end }}
+{{- end }}

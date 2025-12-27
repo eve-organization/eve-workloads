@@ -1,0 +1,66 @@
+labels:
+  env: dev
+  team: eve
+spec:
+  env: dev
+  clusterName: vexere-eks-prod
+
+  ingress:
+    host: ""
+    type: alb
+    groupName: eve # để nhiều ingress share 1 ALB (Ingress Group)
+    scheme: internet-facing # internal hoặc internet-facing
+    targetType: ip
+    listenPorts: '[{"HTTP":80}]' # hoặc '[{"HTTP":80,"HTTPS":443}]' nếu có SSL
+
+  karpenterInstanceProfile: ""
+
+# Danh sách microservices cần deploy trong Chart
+apps:
+  - name: bus-operator-service
+    replicas: 2
+    containerPort: 8080
+    servicePort: 80
+    image:
+      repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/vexere/bus-operator-service
+      tag: latest
+    ingress:
+      enabled: true
+      path: /bus-operator
+    env:
+      - name: SPRING_PROFILES_ACTIVE
+        value: dev
+      - name: AWS_REGION
+        value: ap-southeast-1
+      #      - name: DB_HOST
+      #        value: bus-operator-db.dev.cluster-cxj8r4f3vxyz.us-west-2.rds.amazonaws.com
+      #      - name: DB_PORT
+      #        value: "5432"
+      #      - name: DB_NAME
+      #        value: bus_operator_db
+      #      - name: DB_USERNAME
+      #        valueFrom:
+      #        secretKeyRef:
+      #          name: bus-operator-db-credentials
+      #          key: username
+      #      - name: DB_PASSWORD
+      #        valueFrom:
+      #        secretKeyRef:
+      #          name: bus-operator-db-credentials
+      #          key: password
+
+#  - name: fleet-service
+#    replicas: 2
+#    containerPort: 8080
+#    servicePort: 80
+#    image:
+#      repository: 763104351884.dkr.ecr.us-west-2.amazonaws.com/vexere/ticket-service
+#      tag: latest
+#    ingress:
+#      enabled: true
+#      path: /fleet
+#    env:
+#      - name: SPRING_PROFILES_ACTIVE
+#        value: dev
+#      - name: AWS_REGION
+#        value: ap-southeast-1

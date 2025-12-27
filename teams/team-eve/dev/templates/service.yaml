@@ -1,0 +1,18 @@
+{{- range $app := .Values.apps }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $app.name }}
+  labels:
+    app.kubernetes.io/name: {{ $app.name }}
+    {{- toYaml $.Values.labels | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ $app.name }}
+  ports:
+    - name: http
+      port: {{ $app.servicePort | default 80 }}
+      targetPort: {{ $app.containerPort | default 8080 }}
+---
+{{- end }}

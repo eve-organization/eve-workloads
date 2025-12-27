@@ -1,0 +1,107 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: eve-ingress
+  labels:
+    app: eve
+    {{- toYaml .Values.labels | nindent 4 }}
+  annotations:
+{{ if eq .Values.spec.ingress.type "nginx" }}
+    #nginx annotations
+{{ else }}
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: 'ip'
+  {{ if .Values.spec.ingress.host }} # we can't use grouping without custom domain
+    alb.ingress.kubernetes.io/group.name: eve
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80,"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+  {{ else }}
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+  {{ end }}
+    alb.ingress.kubernetes.io/backend-protocol: 'HTTP'
+    alb.ingress.kubernetes.io/tags: Environment={{ .Values.labels.env }},Team=Eve
+{{ end }}
+  {{ if .Values.spec.ingress.host }}
+    external-dns.alpha.kubernetes.io/set-identifier: {{ .Values.spec.clusterName }}
+    external-dns.alpha.kubernetes.io/aws-weight: '{{ .Values.spec.ingress.route53_weight }}'
+    external-dns.alpha.kubernetes.io/ttl: "10"
+  {{ end }}
+spec:
+{{ if eq .Values.spec.ingress.type "nginx" }}
+  ingressClassName: "nginx"
+{{ else }}
+  ingressClassName: alb
+{{ end }}
+  rules:
+{{ if .Values.spec.ingress.host }}
+    - host: eve.{{ .Values.spec.ingress.host }}
+{{ else }}
+    - host:
+{{ end }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: eve
+                port:
+                  number: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eve
+  labels:
+    app: eve-ingress-{{ .Values.spec.env }}
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: eve
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eve
+  labels:
+    app: eve
+    {{- toYaml .Values.labels | nindent 4 }}
+spec:
+  replicas: 3
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: eve
+  template:
+    metadata:
+      labels:
+        app: eve
+        seb: test
+    spec:
+      containers:
+        - name: eve
+          image: public.ecr.aws/seb-demo/eks-example-go:6d1d832508017919344c62c5eaece159fccffa79
+          imagePullPolicy: Always
+          env:
+            - name: CLUSTER_NAME
+              value: {{ .Values.spec.clusterName }}
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 50Mi
+      {{ if .Values.spec.karpenterInstanceProfile }}
+      nodeSelector:
+        team: eve
+        type: karpenter
+      tolerations:
+        - key: 'eve'
+          operator: 'Exists'
+          effect: 'NoSchedule'
+      {{ end }}

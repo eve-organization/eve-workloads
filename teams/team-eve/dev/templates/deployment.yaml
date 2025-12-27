@@ -1,0 +1,51 @@
+{{- range $app := .Values.apps }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $app.name }}
+  labels:
+    app.kubernetes.io/name: {{ $app.name }}
+    {{- toYaml $.Values.labels | nindent 4 }}
+spec:
+  replicas: {{ $app.replicas | default 2 }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ $app.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ $app.name }}
+        {{- toYaml $.Values.labels | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ $app.name }}
+          image: "{{ $app.image.repository }}:{{ $app.image.tag }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ $app.containerPort | default 8080 }}
+          env:
+            - name: CLUSTER_NAME
+              value: {{ $.Values.spec.clusterName | quote }}
+            {{- range $e := ($app.env | default list) }}
+            - name: {{ $e.name }}
+              value: {{ $e.value | quote }}
+            {{- end }}
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+      {{- if $.Values.spec.karpenterInstanceProfile }}
+      nodeSelector:
+        team: {{ $.Values.labels.team | default "eve" }}
+        type: karpenter
+      tolerations:
+        - key: {{ $.Values.labels.team | default "eve" | quote }}
+          operator: Exists
+          effect: NoSchedule
+      {{- end }}
+---
+{{- end }}
