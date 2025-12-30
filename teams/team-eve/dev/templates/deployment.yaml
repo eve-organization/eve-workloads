@@ -27,8 +27,8 @@ spec:
           env:
             - name: CLUSTER_NAME
               value: {{ $.Values.spec.clusterName | quote }}
-            {{- with $app.env }}
-            {{- toYaml . | nindent 10 }}
+            {{ with $app.env }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
             limits:
