@@ -1,4 +1,5 @@
 {{- range $app := .Values.apps }}
+{{- if ($app.service.enabled | default true) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -15,4 +16,5 @@ spec:
       port: {{ $app.servicePort | default 80 }}
       targetPort: {{ $app.containerPort | default 8080 }}
 ---
+{{- end }}
 {{- end }}

@@ -1,0 +1,23 @@
+{{- range $m := .Values.migrations }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $m.name }}
+  namespace: {{ $.Release.Namespace }}
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded,BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "{{ $m.syncWave | default -1 }}"
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "{{ $m.image.repository }}:{{ $m.image.tag }}"
+          env:
+            {{ with $m.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+---
+{{- end }}

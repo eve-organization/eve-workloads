@@ -17,12 +17,12 @@ spec:
 
 # Danh sách microservices cần deploy trong Chart
 apps:
-  - name: bus-operator-service
+  - name: bus-operator-application
     replicas: 2
     containerPort: 8080
     servicePort: 80
     image:
-      repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/vexere/bus-operator-service
+      repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-application
       tag: latest
     ingress:
       enabled: true
@@ -40,3 +40,35 @@ apps:
           secretKeyRef:
             name: bus-operator-secret
             key: password
+  - name: bus-operator-worker
+    replicas: 1
+    containerPort: 8080
+    image:
+      repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-worker
+      tag: latest
+    ingress:
+      enabled: false
+    env:
+      - name: SPRING_PROFILES_ACTIVE
+        value: dev
+
+
+migration:
+  name: bus-operator-migration
+  image:
+    repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-migration
+    tag: latest
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: dev
+    - name: SPRING_DATASOURCE_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: bus-operator-secret
+          key: username
+    - name: SPRING_DATASOURCE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: bus-operator-secret
+          key: password
+  syncWave: -1
