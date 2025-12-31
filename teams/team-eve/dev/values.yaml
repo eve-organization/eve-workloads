@@ -55,6 +55,16 @@ apps:
     env:
       - name: SPRING_PROFILES_ACTIVE
         value: dev
+      - name: SPRING_DATASOURCE_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: bus-operator-secret
+            key: username
+      - name: SPRING_DATASOURCE_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: bus-operator-secret
+            key: password
 
 
 migration:
