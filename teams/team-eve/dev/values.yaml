@@ -68,21 +68,21 @@ apps:
 
 
 migrations:
-  name: bus-operator-migration
-  image:
-    repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-migration
-    tag: latest
-  env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: dev
-    - name: SPRING_DATASOURCE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: bus-operator-secret
-          key: username
-    - name: SPRING_DATASOURCE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: bus-operator-secret
-          key: password
-  syncWave: -1
+  - name: bus-operator-migration
+    image:
+      repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-migration
+      tag: latest
+    env:
+      - name: SPRING_PROFILES_ACTIVE
+        value: dev
+      - name: SPRING_DATASOURCE_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: bus-operator-secret
+            key: username
+      - name: SPRING_DATASOURCE_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: bus-operator-secret
+            key: password
+    syncWave: -1
