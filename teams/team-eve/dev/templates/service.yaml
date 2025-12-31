@@ -1,5 +1,5 @@
 {{- range $app := .Values.apps }}
-{{- if ($app.service.enabled | default true) }}
+{{- if (dig "service" "enabled" true $app) }}
 apiVersion: v1
 kind: Service
 metadata:

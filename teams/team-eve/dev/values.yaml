@@ -21,6 +21,8 @@ apps:
     replicas: 2
     containerPort: 8080
     servicePort: 80
+    service:
+      enabled: true
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-application
       tag: latest
@@ -43,6 +45,8 @@ apps:
   - name: bus-operator-worker
     replicas: 1
     containerPort: 8080
+    service:
+      enabled: false
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-worker
       tag: latest
