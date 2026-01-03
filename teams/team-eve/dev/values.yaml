@@ -16,6 +16,8 @@ spec:
   karpenterInstanceProfile: ""
 
 # Danh sách microservices cần deploy trong Chart
+# Các app đều có containerPort là 8080, khi deploy lên EKS sẽ không bi conflict miễn là mỗi app chạy ở pod khác nhau - file Deployment riêng. (vì mỗi Pod có IP + network namespace riêng)
+# Đối với service ClusterIP, nếu cần expose ra ngoài qua Ingress thì chỉ cần mỗi service có servicePort khác nhau là được.
 apps:
   - name: bus-operator-application
     replicas: 2
@@ -65,12 +67,79 @@ apps:
           secretKeyRef:
             name: bus-operator-secret
             key: password
+  - name: fleet-application
+    replicas: 2
+    containerPort: 8080
+    servicePort: 80
+    service:
+      enabled: true
+    image:
+      repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/fleet-application
+      tag: latest
+    ingress:
+      enabled: true
+      path: /fleet
+    env:
+      - name: SPRING_PROFILES_ACTIVE
+        value: dev
+      - name: SPRING_DATASOURCE_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: bus-operator-secret
+            key: username
+      - name: SPRING_DATASOURCE_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: bus-operator-secret
+            key: password
+  - name: fleet-worker
+    replicas: 1
+    containerPort: 8080
+    service:
+      enabled: false
+    image:
+      repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/fleet-worker
+      tag: latest
+    ingress:
+      enabled: false
+    env:
+      - name: SPRING_PROFILES_ACTIVE
+        value: dev
+      - name: SPRING_DATASOURCE_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: bus-operator-secret
+            key: username
+      - name: SPRING_DATASOURCE_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: bus-operator-secret
+            key: password
+
 
 
 migrations:
   - name: bus-operator-migration
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-migration
+      tag: latest
+    env:
+      - name: SPRING_PROFILES_ACTIVE
+        value: dev
+      - name: SPRING_DATASOURCE_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: bus-operator-secret
+            key: username
+      - name: SPRING_DATASOURCE_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: bus-operator-secret
+            key: password
+    syncWave: -1
+  - name: fleet-migration
+    image:
+      repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/fleet-migration
       tag: latest
     env:
       - name: SPRING_PROFILES_ACTIVE
