@@ -16,6 +16,8 @@ metadata:
     {{- end }}
     alb.ingress.kubernetes.io/backend-protocol: HTTP
     alb.ingress.kubernetes.io/listen-ports: {{ $.Values.spec.ingress.listenPorts | quote }}
+    alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+    alb.ingress.kubernetes.io/success-codes: "200"
     {{- end }}
 
 spec:
