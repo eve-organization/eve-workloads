@@ -19,6 +19,7 @@ spec:
 # Các app đều có containerPort là 8080, khi deploy lên EKS sẽ không bi conflict miễn là mỗi app chạy ở pod khác nhau - file Deployment riêng. (vì mỗi Pod có IP + network namespace riêng)
 # Đối với service ClusterIP, nếu cần expose ra ngoài qua Ingress thì chỉ cần mỗi service có servicePort khác nhau là được.
 apps:
+  # Bus Operator Microservices
   - name: bus-operator-application
     replicas: 2
     containerPort: 8080
@@ -67,6 +68,7 @@ apps:
           secretKeyRef:
             name: bus-operator-secret
             key: password
+  # Fleet Microservices
   - name: fleet-application
     replicas: 2
     containerPort: 8080
@@ -85,12 +87,12 @@ apps:
       - name: SPRING_DATASOURCE_USERNAME
         valueFrom:
           secretKeyRef:
-            name: bus-operator-secret
+            name: fleet-secret
             key: username
       - name: SPRING_DATASOURCE_PASSWORD
         valueFrom:
           secretKeyRef:
-            name: bus-operator-secret
+            name: fleet-secret
             key: password
   - name: fleet-worker
     replicas: 1
@@ -108,12 +110,12 @@ apps:
       - name: SPRING_DATASOURCE_USERNAME
         valueFrom:
           secretKeyRef:
-            name: bus-operator-secret
+            name: fleet-secret
             key: username
       - name: SPRING_DATASOURCE_PASSWORD
         valueFrom:
           secretKeyRef:
-            name: bus-operator-secret
+            name: fleet-secret
             key: password
 
 
@@ -155,3 +157,29 @@ migrations:
             name: bus-operator-secret
             key: password
     syncWave: -1
+
+
+# Credentials AWS Secret Manager
+secretStoreRef:
+  name: aws-sm
+  kind: ClusterSecretStore
+
+credentials:
+  - name: bus-operator
+    namespace: team-eve
+    targetName: bus-operator-secret
+    remoteKey: prod/bus-operator
+    data:
+      - secretKet: username
+        property: username
+      - secretKet: password
+        property: password
+  - name: fleet
+    namespace: team-eve
+    targetName: fleet-secret
+    remoteKey: prod/fleet
+    data:
+      - secretKet: username
+        property: username
+      - secretKet: password
+        property: password
