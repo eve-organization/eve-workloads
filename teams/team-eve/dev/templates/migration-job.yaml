@@ -6,7 +6,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   annotations:
     argocd.argoproj.io/hook: PreSync
-    argocd.argoproj.io/hook-delete-policy: HookSucceeded,BeforeHookCreation
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
     argocd.argoproj.io/sync-wave: "{{ $m.syncWave | default -1 }}"
 spec:
   template:
