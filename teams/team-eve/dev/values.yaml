@@ -170,16 +170,16 @@ credentials:
     targetName: bus-operator-secret
     remoteKey: prod/bus-operator
     data:
-      - secretKet: username
+      - secretKey: username
         property: username
-      - secretKet: password
+      - secretKey: password
         property: password
   - name: fleet
     namespace: team-eve
     targetName: fleet-secret
     remoteKey: prod/fleet
     data:
-      - secretKet: username
+      - secretKey: username
         property: username
-      - secretKet: password
+      - secretKey: password
         property: password
