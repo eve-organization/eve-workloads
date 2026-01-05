@@ -28,7 +28,7 @@ apps:
       enabled: true
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-application
-      tag: latest
+      tag: 4f60d2d
     ingress:
       enabled: true
       path: /bus-operator
