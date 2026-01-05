@@ -28,7 +28,7 @@ apps:
       enabled: true
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-application
-      tag: 4f60d2d
+      tag: 31f4127
     ingress:
       enabled: true
       path: /bus-operator
@@ -54,7 +54,7 @@ apps:
       enabled: false
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-worker
-      tag: latest
+      tag: 31f4127
     ingress:
       enabled: false
     env:
@@ -81,7 +81,7 @@ apps:
       enabled: true
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/fleet-application
-      tag: latest
+      tag: 0832c29
     ingress:
       enabled: true
       path: /fleet
@@ -107,7 +107,7 @@ apps:
       enabled: false
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/fleet-worker
-      tag: latest
+      tag: 0832c29
     ingress:
       enabled: false
     env:
@@ -132,7 +132,7 @@ migrations:
   - name: bus-operator-migration
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-migration
-      tag: latest
+      tag: 31f4127
     env:
       - name: SPRING_PROFILES_ACTIVE
         value: dev
@@ -152,7 +152,7 @@ migrations:
   - name: fleet-migration
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/fleet-migration
-      tag: latest
+      tag: 0832c29
     env:
       - name: SPRING_PROFILES_ACTIVE
         value: dev
