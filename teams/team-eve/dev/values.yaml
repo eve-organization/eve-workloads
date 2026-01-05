@@ -19,6 +19,19 @@ spec:
 # Các app đều có containerPort là 8080, khi deploy lên EKS sẽ không bi conflict miễn là mỗi app chạy ở pod khác nhau - file Deployment riêng. (vì mỗi Pod có IP + network namespace riêng)
 # Đối với service ClusterIP, nếu cần expose ra ngoài qua Ingress thì chỉ cần mỗi service có servicePort khác nhau là được.
 apps:
+  # Gateway Server
+  - name: gatewayserver
+    containerPort: 8080
+    servicePort: 80
+    ingress:
+      enabled: true
+      path: /v1
+    image:
+      repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/gatewayserver
+      tag: 7b39690
+    env:
+      - name: SERVER_PORT
+        value: "8080"
   # Bus Operator Microservices
   - name: bus-operator-application
     replicas: 2
@@ -30,8 +43,7 @@ apps:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-application
       tag: 31f4127
     ingress:
-      enabled: true
-      path: /bus-operator
+      enabled: false
     env:
       - name: SPRING_PROFILES_ACTIVE
         value: dev
@@ -83,8 +95,7 @@ apps:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/fleet-application
       tag: 0832c29
     ingress:
-      enabled: true
-      path: /fleet
+      enabled: false
     env:
       - name: SPRING_PROFILES_ACTIVE
         value: dev
