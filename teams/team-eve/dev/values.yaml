@@ -45,6 +45,8 @@ apps:
           secretKeyRef:
             name: bus-operator-secret
             key: password
+      - name: SERVER_PORT
+        value: "8080"
   - name: bus-operator-worker
     replicas: 1
     containerPort: 8080
@@ -68,6 +70,8 @@ apps:
           secretKeyRef:
             name: bus-operator-secret
             key: password
+      - name: SERVER_PORT
+        value: "8080"
   # Fleet Microservices
   - name: fleet-application
     replicas: 2
@@ -94,6 +98,8 @@ apps:
           secretKeyRef:
             name: fleet-secret
             key: password
+      - name: SERVER_PORT
+        value: "8080"
   - name: fleet-worker
     replicas: 1
     containerPort: 8080
@@ -117,6 +123,8 @@ apps:
           secretKeyRef:
             name: fleet-secret
             key: password
+      - name: SERVER_PORT
+        value: "8080"
 
 
 
@@ -138,6 +146,8 @@ migrations:
           secretKeyRef:
             name: bus-operator-secret
             key: password
+      - name: SERVER_PORT
+        value: "8080"
     syncWave: -1
   - name: fleet-migration
     image:
@@ -156,6 +166,8 @@ migrations:
           secretKeyRef:
             name: bus-operator-secret
             key: password
+      - name: SERVER_PORT
+        value: "8080"
     syncWave: -1
 
 
