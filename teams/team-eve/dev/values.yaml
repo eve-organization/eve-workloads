@@ -32,6 +32,10 @@ apps:
     env:
       - name: SERVER_PORT
         value: "8080"
+      - name: BUS_OPERATOR_URI
+        value: http://bus-operator-application.team-eve.svc.cluster.local
+      - name: FLEET_URI
+        value: http://fleet-application.team-eve.svc.cluster.local
   # Bus Operator Microservices
   - name: bus-operator-application
     replicas: 2
