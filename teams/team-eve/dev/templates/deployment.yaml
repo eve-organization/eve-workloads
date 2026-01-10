@@ -31,12 +31,16 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
+            {{- if $app.resources }}
+            {{- toYaml $app.resources | nindent 12 }}
+            {{- else }}
             limits:
               cpu: 500m
               memory: 512Mi
             requests:
               cpu: 250m
               memory: 128Mi
+            {{- end }}
       {{- if $.Values.spec.karpenterInstanceProfile }}
       nodeSelector:
         team: {{ $.Values.labels.team | default "eve" }}

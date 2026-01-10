@@ -39,6 +39,13 @@ apps:
   # Bus Operator Microservices
   - name: bus-operator-application
     replicas: 2
+    resources:
+      requests:
+        cpu: 150m
+        memory: 256Mi
+      limits:
+        cpu: 300m
+        memory: 512Mi
     containerPort: 8080
     servicePort: 80
     service:
@@ -75,6 +82,13 @@ apps:
         value: "http://otelcol-gateway-opentelemetry-collector.observability.svc.cluster.local:4318"
   - name: bus-operator-worker
     replicas: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
     containerPort: 8080
     service:
       enabled: false
