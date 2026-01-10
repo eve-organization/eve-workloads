@@ -54,7 +54,7 @@ apps:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: "http://otelcol-gateway-opentelemetry-collector.observability.svc.cluster.local:4318"
       - name: OTEL_TRACES_SAMPLER
-        value: parentbased_traceidratio
+        value: traceidratio # tạm thời đổi sang traceidratio do parentbased_traceidratio có vẻ không hoạt động đúng
       - name: OTEL_TRACES_SAMPLER_ARG
         value: "1.0"
   # Bus Operator Microservices
