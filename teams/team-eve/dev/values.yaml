@@ -69,7 +69,7 @@ apps:
       enabled: true
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-application
-      tag: 5d5dc56
+      tag: f097e69
     ingress:
       enabled: false
     env:
@@ -111,7 +111,7 @@ apps:
       enabled: false
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-worker
-      tag: 5d5dc56
+      tag: f097e69
     ingress:
       enabled: false
     env:
@@ -198,7 +198,7 @@ migrations:
   - name: bus-operator-migration
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-migration
-      tag: 5d5dc56
+      tag: f097e69
     env:
       - name: SPRING_PROFILES_ACTIVE
         value: dev
