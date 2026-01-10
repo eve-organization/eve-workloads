@@ -21,6 +21,13 @@ spec:
 apps:
   # Gateway Server
   - name: gatewayserver
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
     containerPort: 8080
     servicePort: 80
     ingress:
@@ -36,6 +43,16 @@ apps:
         value: http://bus-operator-application.team-eve.svc.cluster.local
       - name: FLEET_URI
         value: http://fleet-application.team-eve.svc.cluster.local
+      - name: OTEL_SERVICE_NAME
+        value: gatewayserver
+      - name: OTEL_RESOURCE_ATTRIBUTES
+        value: "deployment.environment=dev,service.version=1.0.0"
+      - name: OTEL_TRACES_EXPORTER
+        value: "otlp"
+      - name: OTEL_EXPORTER_OTLP_PROTOCOL
+        value: "http/protobuf"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: "http://otelcol-gateway-opentelemetry-collector.observability.svc.cluster.local:4318"
   # Bus Operator Microservices
   - name: bus-operator-application
     replicas: 2
