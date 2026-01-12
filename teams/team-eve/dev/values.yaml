@@ -35,7 +35,7 @@ apps:
       path: /v1
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/gatewayserver
-      tag: aeaace2
+      tag: dac337b
     env:
       - name: SERVER_PORT
         value: "8080"
@@ -73,7 +73,7 @@ apps:
       enabled: true
     image:
       repository: 995138770378.dkr.ecr.ap-southeast-1.amazonaws.com/eve/bus-operator-application
-      tag: 2cf3d7b
+      tag: 66d7001
     ingress:
       enabled: false
     env:
